@@ -1,0 +1,35 @@
+{
+  "name": "node-red-contrib-huawei-router",
+  "version": "0.0.1",
+  "description": "",
+  "main": "huawei-router.js",
+  "scripts": {
+    "pretest": "npm install node-red-node-test-helper node-red mocha --no-save",
+    "test": "mocha \"test/**/*.test.js\""
+  },
+  "author": "zinen",
+  "license": "MIT",
+  "keywords": [
+    "node-red",
+    "huawei",
+    "router"
+  ],
+  "node-red": {
+    "nodes": {
+      "huawei-router": "huawei-router.js"
+    }
+  },
+  "dependencies": {
+    "huawei-lte-api": "0.0.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zinen/node-red-contrib-huawei-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zinen/node-red-contrib-huawei-router/issues"
+  },
+  "files": [
+    "huawei-router.html"
+  ]
+}
