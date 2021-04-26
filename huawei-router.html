@@ -1,7 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('huawei-router', {
         category: 'homesmart',
-        color: '#94c1d0',
+        color: '#E5766A',
         defaults: {
             user: { value: "admin", required: true },
             pass: { value: "", required: true },
@@ -9,7 +9,7 @@
         },
         inputs: 1,
         outputs: 1,
-        icon: "light.svg",
+        icon: "bridge.svg",
         label: function () {
             return this.name || "huawei router"
         }
@@ -23,7 +23,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-pass"><i class="fa fa-key"></i> Password</label>
-        <input type="text" id="node-input-pass" placeholder="">
+        <input type="password" id="node-input-pass" placeholder="" autocomplete="off">
     </div>
     <div class="form-row">
         <label for="node-input-url"><i class="fa fa-globe"></i> URL of router</label>
