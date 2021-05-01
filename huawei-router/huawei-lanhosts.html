@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('huawei-router', {
+    RED.nodes.registerType('huawei-lanhosts', {
         category: 'homesmart',
         color: '#E5766A',
         defaults: {
@@ -11,12 +11,12 @@
         outputs: 1,
         icon: "bridge.svg",
         label: function () {
-            return this.name || "huawei router"
+            return this.name || "huawei known hosts"
         }
     })
 </script>
 
-<script type="text/html" data-template-name="huawei-router">
+<script type="text/html" data-template-name="huawei-lanhosts">
     <div class="form-row">
         <label for="node-input-user"><i class="fa fa-user"></i> Username</label>
         <input type="text" id="node-input-user" placeholder="Eg. admin">
