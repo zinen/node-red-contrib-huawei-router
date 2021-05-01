@@ -16,7 +16,7 @@
   ],
   "node-red": {
     "nodes": {
-      "huawei-router": "huawei-router.js"
+      "huawei-router": "huawei-router/huawei-router.js"
     }
   },
   "dependencies": {
