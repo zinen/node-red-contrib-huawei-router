@@ -10,7 +10,7 @@ Uses the unofficial API from npm package [huawei-lte-api](https://www.npmjs.com/
 
 Example of a node:
 
-![Example of a node](./img/wlanhosts node.jpg)
+![Example of a node](./img/wlanhosts-node.jpg)
 
 Currently working methods of nodes are:
  - Get list if clients on the lan
