@@ -37,7 +37,7 @@ describe('huawei-signal Node', function () {
       n2.on('input', function (msg) {
         // msg.payload.should.be.Array()
         msg.payload.should.not.be.empty()
-        console.log(msg.payload)
+        // console.log(msg.payload)
         // msg.payload[0].should.property('MacAddress').which.is.a.String()
         // msg.payload[0].should.property('ID').which.is.a.String()
         // msg.payload[0].should.property('IpAddress').which.is.a.String()
