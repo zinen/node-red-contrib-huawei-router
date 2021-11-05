@@ -15,4 +15,4 @@ Currently working methods of nodes are:
  - Get list if clients on the lan
  - Get list of known clients. Both earlier and currently connected clients
  - Get signal strength. [Made by request in Issue#1](https://github.com/zinen/node-red-contrib-huawei-router/issues/1)
-
+ - Toggle mobile data connection
