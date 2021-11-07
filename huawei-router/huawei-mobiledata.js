@@ -1,22 +1,21 @@
 module.exports = function (RED) {
+  'use strict'
+  const huaweiLteApi = require('huawei-lte-api')
   function HuaweiMobileData (config) {
-    const huaweiLteApi = require('huawei-lte-api')
     RED.nodes.createNode(this, config)
-    this.url = 'http://' + config.user + ':' + config.pass + '@' + config.url
-    var node = this
-
+    const node = this
     node.on('input', async function (msg, send, done) {
-      const allowedModes = ['on', 'off', 'toggle', 'off-on']
+      const allowedModes = ['on', 1, 'off', 0, 'toggle', 'off-on']
       let mode = msg.mode || node.mode || 'off-on'
       mode = mode.toLowerCase()
       if (!allowedModes.includes(mode)) {
         done('Input mode is not understood')
         return
       }
-      const connection = new huaweiLteApi.Connection(node.url)
-      connection.ready.then(() => {
-        const dialUp = new huaweiLteApi.DialUp(connection)
-        if (mode === 'on') {
+      node.server = RED.nodes.getNode(config.server)
+      try {
+        const dialUp = new huaweiLteApi.DialUp(await node.server.connect())
+        if (mode === 'on' || mode === 1) {
           dialUp.setMobileDataswitch(1).then(function (result) {
             msg.payload = result
             msg.state = result === 'OK' ? 1 : 0
@@ -25,7 +24,7 @@ module.exports = function (RED) {
           }).catch(function (error) {
             done(error)
           })
-        } else if (mode === 'off') {
+        } else if (mode === 'off' || mode === 0) {
           dialUp.setMobileDataswitch(0).then(function (result) {
             msg.payload = result
             msg.state = result === 'OK' ? 0 : 1
@@ -61,9 +60,9 @@ module.exports = function (RED) {
             done(error)
           })
         }
-      }).catch(function (error) {
+      } catch (error) {
         done(error)
-      })
+      }
     })
   }
   RED.nodes.registerType('huawei-mobiledata', HuaweiMobileData)

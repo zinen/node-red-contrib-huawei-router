@@ -18,14 +18,14 @@ describe('huawei-wlanhosts Node', function () {
     helper.stopServer(done)
   })
 
-  // it('should be loaded', function (done) {
-  //   const flow = [{ id: 'n1', type: 'huawei-wlanhosts', name: 'huawei-wlanhosts' }]
-  //   helper.load(testNode, flow, function () {
-  //     const n1 = helper.getNode('n1')
-  //     n1.should.have.property('name', 'huawei-wlanhosts')
-  //     done()
-  //   })
-  // })
+  it('should be loaded', function (done) {
+    const flow = [{ id: 'n1', type: 'huawei-wlanhosts', name: 'huawei-wlanhosts' }]
+    helper.load(testNode, flow, function () {
+      const n1 = helper.getNode('n1')
+      n1.should.have.property('name', 'huawei-wlanhosts')
+      done()
+    })
+  })
   it('should return values', function (done) {
     const flow = [
       { id: 'n1', type: 'huawei-wlanhosts', wires: [['n2']], user: process.env.ROUTER_USER, pass: process.env.ROUTER_PASSWORD, url: process.env.ROUTER_URL },
@@ -37,7 +37,6 @@ describe('huawei-wlanhosts Node', function () {
       n2.on('input', function (msg) {
         msg.payload.should.be.Array()
         msg.payload.should.not.be.empty()
-        // console.log(msg.payload)
         msg.payload[0].should.property('MacAddress').which.is.a.String()
         msg.payload[0].should.property('ID').which.is.a.String()
         msg.payload[0].should.property('IpAddress').which.is.a.String()

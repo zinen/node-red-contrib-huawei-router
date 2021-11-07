@@ -1,13 +1,13 @@
 module.exports = function (RED) {
+  'use strict'
+  const huaweiLteApi = require('huawei-lte-api')
   function HuaweiLanHosts (config) {
-    const huaweiLteApi = require('huawei-lte-api')
     RED.nodes.createNode(this, config)
-    this.url = 'http://' + config.user + ':' + config.pass + '@' + config.url
-    var node = this
+    const node = this
     node.on('input', async function (msg, send, done) {
-      const connection = new huaweiLteApi.Connection(node.url)
-      connection.ready.then(() => {
-        const lan = new huaweiLteApi.Lan(connection)
+      node.server = RED.nodes.getNode(config.server)
+      try {
+        const lan = new huaweiLteApi.Lan(await node.server.connect())
         lan.hostInfo().then(function (result) {
           msg.payload = result.Hosts.Host
           send(msg)
@@ -15,9 +15,9 @@ module.exports = function (RED) {
         }).catch(function (error) {
           done(error)
         })
-      }).catch(function (error) {
+      } catch (error) {
         done(error)
-      })
+      }
     })
   }
   RED.nodes.registerType('huawei-lanhosts', HuaweiLanHosts)

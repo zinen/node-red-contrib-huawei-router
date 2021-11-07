@@ -18,14 +18,14 @@ describe('huawei-lanhosts Node', function () {
     helper.stopServer(done)
   })
 
-  // it('should be loaded', function (done) {
-  //   const flow = [{ id: 'n1', type: 'huawei-lanhosts', name: 'huawei-lanhosts' }]
-  //   helper.load(testNode, flow, function () {
-  //     const n1 = helper.getNode('n1')
-  //     n1.should.have.property('name', 'huawei-lanhosts')
-  //     done()
-  //   })
-  // })
+  it('should be loaded', function (done) {
+    const flow = [{ id: 'n1', type: 'huawei-lanhosts', name: 'huawei-lanhosts' }]
+    helper.load(testNode, flow, function () {
+      const n1 = helper.getNode('n1')
+      n1.should.have.property('name', 'huawei-lanhosts')
+      done()
+    })
+  })
   it('should return values', function (done) {
     const flow = [
       { id: 'n1', type: 'huawei-lanhosts', wires: [['n2']], user: process.env.ROUTER_USER, pass: process.env.ROUTER_PASSWORD, url: process.env.ROUTER_URL },

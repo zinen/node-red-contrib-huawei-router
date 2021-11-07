@@ -23,6 +23,7 @@
       "huawei-wlanhosts": "huawei-router/huawei-wlanhosts.js",
       "huawei-lanhosts": "huawei-router/huawei-lanhosts.js",
       "huawei-signal": "huawei-router/huawei-signal.js",
+      "huawei-config": "huawei-router/huawei-config.js",
       "huawei-mobiledata": "huawei-router/huawei-mobiledata.js"
     }
   },
