@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "pretest": "npm install node-red-node-test-helper node-red mocha --no-save",
-    "test": "mocha \"test/**/*.test.js\" || true",
+    "test": "mocha \"test/**/*.test.js\"",
     "posttest": "npm uninstall node-red-node-test node-red"
   },
   "author": "zinen",
@@ -20,11 +20,7 @@
   ],
   "node-red": {
     "nodes": {
-      "huawei-wlanhosts": "huawei-router/huawei-wlanhosts.js",
-      "huawei-lanhosts": "huawei-router/huawei-lanhosts.js",
-      "huawei-signal": "huawei-router/huawei-signal.js",
-      "huawei-config": "huawei-router/huawei-config.js",
-      "huawei-mobiledata": "huawei-router/huawei-mobiledata.js"
+      "huawei-router": "huawei-router/huawei-router.js"
     }
   },
   "dependencies": {

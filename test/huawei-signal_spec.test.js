@@ -1,21 +1,24 @@
-/* global describe, beforeEach, afterEach, it */
+/* global describe, before, after, afterEach, it */
 /* eslint-disable-next-line no-unused-vars */
 const should = require('should')
 const helper = require('node-red-node-test-helper')
-const testNode = require('../huawei-router/huawei-signal.js')
+const testNode = require('../huawei-router/huawei-router.js')
 require('dotenv').config()
 
 helper.init(require.resolve('node-red'))
 
 describe('huawei-signal Node', function () {
   this.retries(2)
-  beforeEach(function (done) {
+  before(function (done) {
     helper.startServer(done)
   })
 
-  afterEach(function (done) {
-    helper.unload()
+  after(function (done) {
     helper.stopServer(done)
+  })
+
+  afterEach(function () {
+    helper.unload()
   })
 
   it('should be loaded', function (done) {
@@ -40,7 +43,7 @@ describe('huawei-signal Node', function () {
     ]
 
     helper.load(testNode, flow, function () {
-      const c1 = helper.getNode('c1')
+      helper.getNode('n0')
       const n1 = helper.getNode('n1')
       const n2 = helper.getNode('n2')
       n2.on('input', function (msg) {
@@ -51,9 +54,6 @@ describe('huawei-signal Node', function () {
       n1.on('call:error', function (err) {
         console.error(err.firstArg)
         done(new Error(err.firstArg))
-      })
-      c1.on('input', function (msg) {
-        console.log(msg)
       })
       n1.receive({ payload: '' })
     })
