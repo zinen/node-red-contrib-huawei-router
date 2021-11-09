@@ -4,44 +4,46 @@ module.exports = function (RED) {
   function HuaweiConfig (n) {
     RED.nodes.createNode(this, n)
     const node = this
-    node.connect = function () {
-      const self = this
-      self.now = (new Date()).getTime()
-      if (self.now >= self.sessionTimeout) {
-        self.connection = null
-      }
-      // Add 5 minutes to current time
-      self.sessionTimeout = self.now + 300000
-
-      return new Promise((resolve, reject) => {
-        if (!self.connection) {
-          self.connection = new huaweiLteApi.Connection('http://' + n.user + ':' + n.pass + '@' + n.url)
-          self.connection.ready
-            .then(() => {
-              resolve(self.connection)
-            })
-            .catch((err) => {
-              // catched here here: no connection router, wrong login, wrong ip/hostname, already logged in
-              self.connection = null
-              reject(err.message)
-            })
-        } else {
-          resolve(self.connection)
+    node.connect = async function () {
+      try {
+        this.now = (new Date()).getTime()
+        // On timeout a new session should be made
+        if (this.now >= this.sessionTimeout) {
+          this.connection = null
         }
-      })
+        // Add 5 minutes to current time as timeout
+        this.sessionTimeout = node.now + 300000
+        if (!this.connection) {
+        // Make new session
+          this.connection = new huaweiLteApi.Connection('http://' + n.user + ':' + n.pass + '@' + n.url)
+          await this.connection.ready
+        }
+        return this.connection
+      } catch (error) {
+        this.connection = null
+        throw error
+      }
     }
-    node.on('close', function (removed, done) {
-      if (removed) {
-        // This node has been disabled/deleted
-        // delete node.connection
-      } else {
-        // This node is being restarted
-        // node.connection = null
+    node.on('close', async function (removed, done) {
+      try {
+        if ((new Date()).getTime() < node.sessionTimeout) {
+          const user = new huaweiLteApi.User(await this.connect())
+          await user.logout()
+        }
+      } finally {
+        if (removed) {
+          // This node has been disabled/deleted
+          delete this.connection
+        } else {
+          // This node is being restarted/stopped
+          this.connection = null
+        }
       }
       done()
     })
   }
   RED.nodes.registerType('huawei-config', HuaweiConfig)
+
   function HuaweiLanHosts (config) {
     RED.nodes.createNode(this, config)
     const node = this
@@ -51,21 +53,26 @@ module.exports = function (RED) {
         done('No config specified')
         return
       }
+      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
       try {
         const lan = new huaweiLteApi.Lan(await node.server.connect())
-        lan.hostInfo().then(function (result) {
-          msg.payload = result.Hosts.Host
-          send(msg)
-          done()
-        }).catch(function (error) {
-          done(error)
-        })
+        const result = await lan.hostInfo()
+        msg.payload = result.Hosts.Host
+        node.status({ text: '' })
+        send(msg)
+        done()
       } catch (error) {
-        done(error)
+        if (error.code === 125002) {
+          // Make sure the session timeout happens on session error (125002)
+          node.server.sessionTimeout = 0
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
       }
     })
   }
   RED.nodes.registerType('huawei-lanhosts', HuaweiLanHosts)
+
   function HuaweiMobileData (config) {
     RED.nodes.createNode(this, config)
     const node = this
@@ -82,59 +89,47 @@ module.exports = function (RED) {
         done('No config specified')
         return
       }
+      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
       try {
         const dialUp = new huaweiLteApi.DialUp(await node.server.connect())
         if (mode === 'on' || mode === 1 || mode === true) {
-          dialUp.setMobileDataswitch(1).then(function (result) {
-            msg.payload = result
-            msg.state = result === 'OK' ? 1 : 0
-            send(msg)
-            done()
-          }).catch(function (error) {
-            done(error)
-          })
+          const result = await dialUp.setMobileDataswitch(1)
+          msg.payload = result
+          msg.state = result === 'OK' ? 1 : 0
+          send(msg)
         } else if (mode === 'off' || mode === 0 || mode === false) {
-          dialUp.setMobileDataswitch(0).then(function (result) {
-            msg.payload = result
-            msg.state = result === 'OK' ? 0 : 1
-            send(msg)
-            done()
-          }).catch(function (error) {
-            done(error)
-          })
+          const result = await dialUp.setMobileDataswitch(0)
+          msg.payload = result
+          msg.state = result === 'OK' ? 0 : 1
+          send(msg)
         } else if (mode === 'toggle') {
-          dialUp.mobileDataswitch().then(function ({ dataswitch }) {
-            dialUp.setMobileDataswitch(1 - Number(dataswitch)).then(function (result) {
-              msg.payload = result
-              msg.state = result === 'OK' ? 1 - Number(dataswitch) : Number(dataswitch)
-              send(msg)
-              done()
-            }).catch(function (error) {
-              done(error)
-            })
-          }).catch(function (error) {
-            done(error)
-          })
+          const { dataswitch } = await dialUp.mobileDataswitch()
+          const result = await dialUp.setMobileDataswitch(1 - Number(dataswitch))
+          msg.payload = result
+          msg.state = result === 'OK' ? 1 - Number(dataswitch) : Number(dataswitch)
+          send(msg)
         } else if (mode === 'off-on') {
-          dialUp.setMobileDataswitch(0).then(function () {
-            dialUp.setMobileDataswitch(1).then(function (result) {
-              msg.payload = result
-              msg.state = result === 'OK' ? 1 : 0
-              send(msg)
-              done()
-            }).catch(function (error) {
-              done(error)
-            })
-          }).catch(function (error) {
-            done(error)
-          })
+          await dialUp.setMobileDataswitch(0)
+          const result = await dialUp.setMobileDataswitch(1)
+          msg.payload = result
+          msg.state = result === 'OK' ? 1 : 0
+          send(msg)
         }
       } catch (error) {
-        done(error)
+        if (error.code === 125002) {
+          // Make sure the session timeout happens on session error (125002)
+          node.server.sessionTimeout = 0
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
+        return
       }
+      node.status({ text: '' })
+      done()
     })
   }
   RED.nodes.registerType('huawei-mobiledata', HuaweiMobileData)
+
   function HuaweiSignal (config) {
     RED.nodes.createNode(this, config)
     const node = this
@@ -144,17 +139,21 @@ module.exports = function (RED) {
         done('No config specified')
         return
       }
+      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
       try {
         const device = new huaweiLteApi.Device(await node.server.connect())
-        device.signal().then(function (result) {
-          msg.payload = result
-          send(msg)
-          done()
-        }).catch(function (error) {
-          done(error)
-        })
+        const result = await device.signal()
+        msg.payload = result
+        node.status({ text: '' })
+        send(msg)
+        done()
       } catch (error) {
-        done(error)
+        if (error.code === 125002) {
+          // Make sure the session timeout happens on session error (125002)
+          node.server.sessionTimeout = 0
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
       }
     })
   }
@@ -169,21 +168,26 @@ module.exports = function (RED) {
         done('No config specified')
         return
       }
+      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
       try {
         const device = new huaweiLteApi.WLan(await node.server.connect())
-        device.hostList().then(function (result) {
-          msg.payload = result
-          send(msg)
-          done()
-        }).catch(function (error) {
-          done(error)
-        })
+        const result = await device.hostList()
+        msg.payload = result
+        node.status({ text: '' })
+        send(msg)
+        done()
       } catch (error) {
-        done(error)
+        if (error.code === 125002) {
+          // Make sure the session timeout happens on session error (125002)
+          node.server.sessionTimeout = 0
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
       }
     })
   }
   RED.nodes.registerType('huawei-wlanhosts', HuaweiWlanHosts)
+
   function HuaweiReboot (config) {
     RED.nodes.createNode(this, config)
     const node = this
@@ -193,17 +197,21 @@ module.exports = function (RED) {
         done('No config specified')
         return
       }
+      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
       try {
         const device = new huaweiLteApi.Device(await node.server.connect())
-        device.reboot().then(function (result) {
-          msg.payload = result
-          send(msg)
-          done()
-        }).catch(function (error) {
-          done(error)
-        })
+        const result = await device.reboot()
+        msg.payload = result
+        node.status({ text: '' })
+        send(msg)
+        done()
       } catch (error) {
-        done(error)
+        if (error.code === 125002) {
+          // Make sure the session timeout happens on session error (125002)
+          node.server.sessionTimeout = 0
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
       }
     })
   }
