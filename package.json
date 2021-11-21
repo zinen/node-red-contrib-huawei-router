@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-huawei-router",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "scripts": {
     "pretest": "npm install node-red-node-test-helper node-red mocha --no-save",
@@ -37,6 +37,6 @@
     "huawei-router/*"
   ],
   "devDependencies": {
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.6.0"
   }
 }
