@@ -4,6 +4,7 @@
         "homesmart",
         "lanhosts",
         "mobiledata",
+        "posttest",
         "wlanhosts"
     ],
     "standard.autoFixOnSave": true
