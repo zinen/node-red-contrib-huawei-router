@@ -264,3 +264,73 @@
         </dd>
     </dl>
 </script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("huawei-sms-send", {
+        category: 'homesmart',
+        color: '#E5766A',
+        defaults: {
+            name: {value:""},
+            server: {value:"", type:"huawei-config"},
+            phoneNumber: { value: ""},
+            message: {value:""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "bridge.svg",
+        label: function () {
+            return this.name || "huawei send sms"
+        }
+    })
+</script>
+
+<script type="text/html" data-template-name="huawei-sms-send">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-phoneNumber"><i class="fa fa-tag"></i> Phone number</label>
+        <input type="text" id="node-input-phoneNumber" placeholder="0123465789">
+    </div>
+    <div class="form-row">
+        <label for="node-input-message"><i class="fa fa-tag"></i> message</label>
+        <input type="text" id="node-input-message" placeholder="Text message">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="huawei-sms-send">
+    <p>Send sms/text message from router.</p>
+    <p>Parameters can be set inside this node or via input variables. Input variables has higher priority then values defines in this node.</p>
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd>
+            Message to be send. Empty payload will send text defined in the node.
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>number
+            <span class="property-type">string/array of strings or numbers</span>
+        </dt>
+        <dd>
+            Phone number or numbers.
+        </dd>
+    </dl>
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd>
+            Full returned from the <a href="https://github.com/Salamek/huawei-lte-api-ts/blob/8d2366314b57b67cc38fcfe1c04640ca70912403/src/api/Sms.ts#L112">API</a>.
+            <i>Unknown which data is relevant for the user</i>
+        </dd>
+    </dl>
+</script>

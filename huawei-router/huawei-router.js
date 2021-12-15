@@ -216,4 +216,45 @@ module.exports = function (RED) {
     })
   }
   RED.nodes.registerType('huawei-reboot', HuaweiReboot)
+  function HuaweiSMSSend (config) {
+    RED.nodes.createNode(this, config)
+    const node = this
+    node.on('input', async function (msg, send, done) {
+      function parseNumber (inputNumber) {
+        if (typeof inputNumber === 'string') {
+          return [inputNumber]
+        } else if (typeof inputNumber === 'number') {
+          return [inputNumber.toString()]
+        } else if (Array.isArray(inputNumber)) {
+          return inputNumber.map(element => {
+            return parseNumber(element)[0]
+          })
+        }
+        node.warn('Error understanding input number. Accepts text,number and array of text/numbers')
+        return ['']
+      }
+      const textMessage = msg.payload || node.message || ''
+      const phoneNumber = msg.number || node.phoneNumber || ['']
+      node.server = RED.nodes.getNode(config.server)
+      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
+      try {
+        const SMS = new huaweiLteApi.Sms(await node.server.connect())
+        msg.payload = await SMS.sendSms(parseNumber(phoneNumber), textMessage.toString())
+        send(msg)
+      } catch (error) {
+        if (error.code === 125002) {
+          // Make sure the session timeout happens on session error (125002)
+          node.server.sessionTimeout = 0
+        } else {
+          console.trace(error)
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
+        return
+      }
+      node.status({ text: '' })
+      done()
+    })
+  }
+  RED.nodes.registerType('huawei-sms-send', HuaweiSMSSend)
 }
