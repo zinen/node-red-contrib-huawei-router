@@ -100,10 +100,10 @@
     <div class="form-row">
         <label for="node-input-mode"><i class="fa fa-pencil-square-o"></i> Mode</label>
         <select value="" id="node-input-mode">
-            <option value="off-on">off-on</option>
-            <option value="on">on</option>
-            <option value="off">off</option>
-            <option value="toggle">toggle</option>
+            <option value="off-on">turn data off then on again</option>
+            <option value="on">turn data on</option>
+            <option value="off">turn data off</option>
+            <option value="toggle">toggle data on/off</option>
         </select>
     </div>
 </script>
@@ -114,7 +114,7 @@
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>mode
-            <span class="property-type">string</span>
+            <span class="property-type">string/number/bool</span>
         </dt>
         <dd>
             Accepted values are 'on'/1/true, 'off'/0/false, 'toggle', 'off-on'.
@@ -134,7 +134,15 @@
             <span class="property-type">number</span>
         </dt>
         <dd>
-            States wether mobile data is turned on. 1 = ON, 0 = OFF.
+            States the updated status for data as a number. 1 = ON, 0 = OFF.
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>mode
+            <span class="property-type">string/number/bool</span>
+        </dt>
+        <dd>
+            Return mode back. Mode is either defined as input msg or via node properties.
         </dd>
     </dl>
 </script>

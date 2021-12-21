@@ -58,4 +58,66 @@ describe('huawei-mobiledata Node', function () {
       n1.receive({ payload: '', mode: 'off-on' })
     })
   })
+  it('should turn data off', function (done) {
+    const flow = [
+      {
+        id: 'n0',
+        type: 'huawei-config',
+        user: process.env.ROUTER_USER,
+        pass: process.env.ROUTER_PASSWORD,
+        url: process.env.ROUTER_URL
+      },
+      { id: 'n1', type: 'huawei-mobiledata', wires: [['n2']], server: 'n0' },
+      { id: 'n2', type: 'helper' }
+    ]
+    helper.load(testNode, flow, function () {
+      helper.getNode('n0')
+      const n1 = helper.getNode('n1')
+      const n2 = helper.getNode('n2')
+      n2.on('input', function (msg) {
+        console.log(msg)
+        msg.payload.should.equal('OK')
+        msg.should.property('state').which.is.a.Number()
+        msg.mode.should.equal(false)
+        msg.state.should.equal(0)
+        done()
+      })
+      n1.on('call:error', function (err) {
+        console.error(err.firstArg)
+        done(new Error(err.firstArg))
+      })
+      n1.receive({ payload: '', mode: false })
+    })
+  })
+  it('should turn data on', function (done) {
+    const flow = [
+      {
+        id: 'n0',
+        type: 'huawei-config',
+        user: process.env.ROUTER_USER,
+        pass: process.env.ROUTER_PASSWORD,
+        url: process.env.ROUTER_URL
+      },
+      { id: 'n1', type: 'huawei-mobiledata', wires: [['n2']], server: 'n0' },
+      { id: 'n2', type: 'helper' }
+    ]
+    helper.load(testNode, flow, function () {
+      helper.getNode('n0')
+      const n1 = helper.getNode('n1')
+      const n2 = helper.getNode('n2')
+      n2.on('input', function (msg) {
+        console.log(msg)
+        msg.payload.should.equal('OK')
+        msg.should.property('state').which.is.a.Number()
+        msg.mode.should.equal(1)
+        msg.state.should.equal(1)
+        done()
+      })
+      n1.on('call:error', function (err) {
+        console.error(err.firstArg)
+        done(new Error(err.firstArg))
+      })
+      n1.receive({ payload: '', mode: 1 })
+    })
+  })
 })
