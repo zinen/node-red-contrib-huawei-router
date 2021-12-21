@@ -58,8 +58,8 @@ module.exports = function (RED) {
         send(msg)
         done()
       } catch (error) {
-        if (error.code === 125002) {
-          // Make sure the session timeout happens on session error (125002)
+        if (error.code === 125002 || error.code === 125003) {
+          // Make sure the session timeout happens on session error (125002/125003)
           node.server.sessionTimeout = 0
         }
         node.status({ fill: 'red', text: error.message })
@@ -109,8 +109,8 @@ module.exports = function (RED) {
           send(msg)
         }
       } catch (error) {
-        if (error.code === 125002) {
-          // Make sure the session timeout happens on session error (125002)
+        if (error.code === 125002 || error.code === 125003) {
+          // Make sure the session timeout happens on session error (125002/125003)
           node.server.sessionTimeout = 0
         }
         node.status({ fill: 'red', text: error.message })
@@ -137,8 +137,8 @@ module.exports = function (RED) {
         send(msg)
         done()
       } catch (error) {
-        if (error.code === 125002) {
-          // Make sure the session timeout happens on session error (125002)
+        if (error.code === 125002 || error.code === 125003) {
+          // Make sure the session timeout happens on session error (125002/125003)
           node.server.sessionTimeout = 0
         }
         node.status({ fill: 'red', text: error.message })
@@ -162,8 +162,8 @@ module.exports = function (RED) {
         send(msg)
         done()
       } catch (error) {
-        if (error.code === 125002) {
-          // Make sure the session timeout happens on session error (125002)
+        if (error.code === 125002 || error.code === 125003) {
+          // Make sure the session timeout happens on session error (125002/125003)
           node.server.sessionTimeout = 0
         }
         node.status({ fill: 'red', text: error.message })
@@ -187,8 +187,8 @@ module.exports = function (RED) {
         send(msg)
         done()
       } catch (error) {
-        if (error.code === 125002) {
-          // Make sure the session timeout happens on session error (125002)
+        if (error.code === 125002 || error.code === 125003) {
+          // Make sure the session timeout happens on session error (125002/125003)
           node.server.sessionTimeout = 0
         }
         node.status({ fill: 'red', text: error.message })
