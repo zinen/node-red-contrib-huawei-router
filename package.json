@@ -26,7 +26,7 @@
     }
   },
   "dependencies": {
-    "huawei-lte-api": "git+https://github.com/Salamek/huawei-lte-api-ts.git#b69111a"
+    "huawei-lte-api": "git+https://github.com/Salamek/huawei-lte-api-ts.git#f116c48"
   },
   "repository": {
     "type": "git",
