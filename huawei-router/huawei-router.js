@@ -11,8 +11,8 @@ module.exports = function (RED) {
         if (this.now >= this.sessionTimeout) {
           this.connection = null
         }
-        // Add 5 minutes to current time as timeout
-        this.sessionTimeout = node.now + 300000
+        // Add 298 seconds to current time as timeout
+        this.sessionTimeout = node.now + 298000
         if (!this.connection) {
         // Make new session
           this.connection = new huaweiLteApi.Connection('http://' + n.user + ':' + n.pass + '@' + n.url)
@@ -49,11 +49,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      if (node.server.connect == null) {
-        done('No config specified')
-        return
-      }
-      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
+      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
       try {
         const lan = new huaweiLteApi.Lan(await node.server.connect())
         const result = await lan.hostInfo()
@@ -78,37 +74,34 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       const allowedModes = ['on', 1, true, 'off', 0, false, 'toggle', 'off-on']
-      let mode = msg.mode || node.mode || 'off-on'
-      mode = mode.toLowerCase()
-      if (!allowedModes.includes(mode)) {
+      msg.mode = msg.mode || node.mode || 'off-on'
+      msg.mode = msg.mode.toLowerCase()
+      if (!allowedModes.includes(msg.mode)) {
         done('Input mode is not understood')
         return
       }
       node.server = RED.nodes.getNode(config.server)
-      if (node.server.connect == null) {
-        done('No config specified')
-        return
-      }
-      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
+      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
       try {
         const dialUp = new huaweiLteApi.DialUp(await node.server.connect())
-        if (mode === 'on' || mode === 1 || mode === true) {
+        if (msg.mode === 'on' || msg.mode === 1 || msg.mode === true) {
           const result = await dialUp.setMobileDataswitch(1)
           msg.payload = result
           msg.state = result === 'OK' ? 1 : 0
           send(msg)
-        } else if (mode === 'off' || mode === 0 || mode === false) {
+        } else if (msg.mode === 'off' || msg.mode === 0 || msg.mode === false) {
           const result = await dialUp.setMobileDataswitch(0)
           msg.payload = result
           msg.state = result === 'OK' ? 0 : 1
           send(msg)
-        } else if (mode === 'toggle') {
+        } else if (msg.mode === 'toggle') {
           const { dataswitch } = await dialUp.mobileDataswitch()
           const result = await dialUp.setMobileDataswitch(1 - Number(dataswitch))
           msg.payload = result
           msg.state = result === 'OK' ? 1 - Number(dataswitch) : Number(dataswitch)
           send(msg)
-        } else if (mode === 'off-on') {
+        } else {
+          // if (msg.mode === 'off-on') {
           await dialUp.setMobileDataswitch(0)
           const result = await dialUp.setMobileDataswitch(1)
           msg.payload = result
@@ -135,11 +128,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      if (node.server.connect == null) {
-        done('No config specified')
-        return
-      }
-      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
+      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
       try {
         const device = new huaweiLteApi.Device(await node.server.connect())
         const result = await device.signal()
@@ -164,11 +153,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      if (node.server.connect == null) {
-        done('No config specified')
-        return
-      }
-      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
+      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
       try {
         const device = new huaweiLteApi.WLan(await node.server.connect())
         const result = await device.hostList()
@@ -193,11 +178,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      if (node.server.connect == null) {
-        done('No config specified')
-        return
-      }
-      node.status({ fill: 'blue', shape: 'dot', text: 'Connecting' })
+      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
       try {
         const device = new huaweiLteApi.Device(await node.server.connect())
         const result = await device.reboot()
