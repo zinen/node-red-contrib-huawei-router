@@ -14,7 +14,7 @@ module.exports = function (RED) {
         // Add 298 seconds to current time as timeout
         this.sessionTimeout = node.now + 298000
         if (!this.connection) {
-        // Make new session
+          // Make new session
           this.connection = new huaweiLteApi.Connection('http://' + n.user + ':' + n.pass + '@' + n.url)
           await this.connection.ready
         }
@@ -74,8 +74,9 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       const allowedModes = ['on', 1, true, 'off', 0, false, 'toggle', 'off-on']
-      msg.mode = msg.mode || node.mode || 'off-on'
-      msg.mode = msg.mode.toLowerCase()
+      if (typeof (msg.mode) === 'undefined') {
+        msg.mode = node.mode
+      } else if (typeof (msg.mode) === 'string') { msg.mode = msg.mode.toLowerCase() }
       if (!allowedModes.includes(msg.mode)) {
         done('Input mode is not understood')
         return
@@ -100,8 +101,7 @@ module.exports = function (RED) {
           msg.payload = result
           msg.state = result === 'OK' ? 1 - Number(dataswitch) : Number(dataswitch)
           send(msg)
-        } else {
-          // if (msg.mode === 'off-on') {
+        } else if (msg.mode === 'off-on') {
           await dialUp.setMobileDataswitch(0)
           const result = await dialUp.setMobileDataswitch(1)
           msg.payload = result
