@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-huawei-router",
-  "version": "1.1.0b",
+  "version": "1.1.0c",
   "description": "",
   "scripts": {
     "pretest": "npm install node-red-node-test-helper node-red mocha --no-save",
@@ -26,7 +26,7 @@
     }
   },
   "dependencies": {
-    "huawei-lte-api": "git+https://github.com/Salamek/huawei-lte-api-ts.git#f116c48"
+    "huawei-lte-api": "0.0.10"
   },
   "repository": {
     "type": "git",
