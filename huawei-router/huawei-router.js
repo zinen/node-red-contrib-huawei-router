@@ -216,7 +216,7 @@ module.exports = function (RED) {
         node.warn('Error understanding input number. Accepts text,number and array of text/numbers')
         return ['']
       }
-      const textMessage = msg.payload || 'empty string'
+      const textMessage = String(msg.payload) || 'empty string'
       const phoneNumber = msg.number || node.phoneNumber || ['']
       node.server = RED.nodes.getNode(config.server)
       node.status({ text: 'Connecting' })
