@@ -15,7 +15,7 @@ module.exports = function (RED) {
         this.sessionTimeout = node.now + 298000
         if (!this.connection) {
           // Make new session
-          this.connection = new huaweiLteApi.Connection('http://' + n.user + ':' + n.pass + '@' + n.url)
+          this.connection = new huaweiLteApi.Connection(`http://${n.user}:${n.pass}@${n.url}`)
           await this.connection.ready
         }
         return this.connection
@@ -72,6 +72,7 @@ module.exports = function (RED) {
   function HuaweiMobileData (config) {
     RED.nodes.createNode(this, config)
     const node = this
+    node.mode = config.mode
     node.on('input', async function (msg, send, done) {
       const allowedModes = ['on', 1, true, 'off', 0, false, 'toggle', 'off-on']
       if (typeof (msg.mode) === 'undefined') {
