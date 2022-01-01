@@ -213,16 +213,22 @@ module.exports = function (RED) {
             return parseNumber(element)[0]
           })
         }
-        node.warn('Error understanding input number. Accepts text,number and array of text/numbers')
+        node.warn('Error understanding input number. Accepts text, number and array of text/numbers but not ' + String(inputNumber))
         return ['']
       }
-      const textMessage = String(msg.payload) || 'empty string'
-      const phoneNumber = msg.number || node.phoneNumber || ['']
+      msg.payload = String(msg.payload) || 'empty string'
+      msg.phoneNumber = msg.number || node.phoneNumber || ['']
+      msg.phoneNumber = parseNumber(msg.phoneNumber)
       node.server = RED.nodes.getNode(config.server)
       node.status({ text: 'Connecting' })
       try {
         const SMS = new huaweiLteApi.Sms(await node.server.connect())
-        msg.payload = await SMS.sendSms(parseNumber(phoneNumber), textMessage.toString())
+        const result = await SMS.sendSms(msg.phoneNumber, msg.payload)
+        if (result !== 'OK') {
+          node.status({ fill: 'red', text: result })
+          done(result)
+          return
+        }
         send(msg)
       } catch (error) {
         if (error.code === 125002) {
