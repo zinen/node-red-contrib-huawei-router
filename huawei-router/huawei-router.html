@@ -316,7 +316,7 @@
             <span class="property-type">string</span>
         </dt>
         <dd>
-            Message to be send. Empty payload will send text defined in the node.
+            Message to be send.
         </dd>
     </dl>
     <dl class="message-properties">
@@ -324,7 +324,7 @@
             <span class="property-type">string/array of strings or numbers</span>
         </dt>
         <dd>
-            Phone number or numbers.
+            Phone number or numbers to receive the text. Number defined in properties will be used if not defined.
         </dd>
     </dl>
     <h3>Output</h3>
@@ -337,11 +337,11 @@
         </dd>
     </dl>
     <dl class="message-properties">
-        <dt>phoneNumber
+        <dt>number
             <span class="property-type">array</span>
         </dt>
         <dd>
-            Phone numbers the text massage was sent to returned as an
+            Phone numbers the text massage was sent to. Returned as an
             array of strings.
         </dd>
     </dl>

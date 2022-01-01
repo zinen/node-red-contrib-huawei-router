@@ -217,8 +217,8 @@ module.exports = function (RED) {
         return ['']
       }
       msg.payload = String(msg.payload) || 'empty string'
-      msg.phoneNumber = msg.number || node.phoneNumber || ['']
-      msg.phoneNumber = parseNumber(msg.phoneNumber)
+      msg.number = msg.number || node.phoneNumber || ['']
+      msg.number = parseNumber(msg.number)
       node.server = RED.nodes.getNode(config.server)
       node.status({ text: 'Connecting' })
       try {
