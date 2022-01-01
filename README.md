@@ -14,9 +14,10 @@ Example of a node:
 Currently working methods of nodes are:
  - Get list if clients on the lan
  - Get list of known clients. Both earlier and currently connected clients
- - Get signal strength. [Made by request in Issue#1](https://github.com/zinen/node-red-contrib-huawei-router/issues/1)
+ - Get signal strength. [Made by request in issue#1](https://github.com/zinen/node-red-contrib-huawei-router/issues/1)
  - Toggle mobile data connection
  - Reboot device
+ - Send text/ SMS out [Made by request in issue#6](https://github.com/zinen/node-red-contrib-huawei-router/issues/6). My experience on testing on a device that does not support SMS is that the router just respond back that all is okay and the SMS will be sent. If your router support SMS it does work though.
 
 ## Known limits
  - The router can only have so many active sessions and a session seems to end after 5 minutes of inactivity. The limit in active sessions means you can get a error code back from this router `108003: Already login` meaning too many active sessions. This is a limit on the router it self. Wait some time (max 5 minutes) and try again.

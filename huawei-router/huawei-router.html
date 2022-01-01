@@ -33,7 +33,7 @@
         color: '#E5766A',
         defaults: {
             name: {value:""},
-            server: {value:"", type:"huawei-config"}
+            server: {type:"huawei-config", required:true}
         },
         inputs: 1,
         outputs: 1,
@@ -76,7 +76,7 @@
         color: '#E5766A',
         defaults: {
             name: {value:""},
-            server: {value:"", type:"huawei-config"},
+            server: {type:"huawei-config", required:true},
             mode: { value: "off-on"}
         },
         inputs: 1,
@@ -153,7 +153,7 @@
         color: '#E5766A',
         defaults: {
             name: {value:""},
-            server: {value:"", type:"huawei-config"}
+            server: {type:"huawei-config", required:true}
         },
         inputs: 1,
         outputs: 1,
@@ -195,7 +195,7 @@
         color: '#E5766A',
         defaults: {
             name: {value:""},
-            server: {value:"", type:"huawei-config"}
+            server: {type:"huawei-config", required:true}
         },
         inputs: 1,
         outputs: 1,
@@ -237,7 +237,7 @@
         color: '#E5766A',
         defaults: {
             name: {value:""},
-            server: {value:"", type:"huawei-config"}
+            server: {type:"huawei-config", required:true}
         },
         inputs: 1,
         outputs: 1,
@@ -269,6 +269,80 @@
         </dt>
         <dd>
             Returns OK if reboot is happening.
+        </dd>
+    </dl>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("huawei-sms-send", {
+        category: 'homesmart',
+        color: '#E5766A',
+        defaults: {
+            name: {value:""},
+            server: {type:"huawei-config", required:true},
+            phoneNumber: { value: ""},
+            message: {value:""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "bridge.svg",
+        label: function () {
+            return this.name || "huawei send sms"
+        }
+    })
+</script>
+
+<script type="text/html" data-template-name="huawei-sms-send">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-phoneNumber"><i class="fa fa-tag"></i> Phone number</label>
+        <input type="text" id="node-input-phoneNumber" placeholder="0123465789">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="huawei-sms-send">
+    <p>Send sms/text message from router. This only works if your router supports SMS do check out the <a href="https://www.npmjs.com/package/huawei-lte-api">tested devices list</a>.</p>
+    <p>Parameters can be set inside the node or via input variables. Input variables has higher priority then values defines in the node.</p>
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd>
+            Message to be send.
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>number
+            <span class="property-type">string/array of strings or numbers</span>
+        </dt>
+        <dd>
+            Phone number or numbers to receive the text. Number defined in properties will be used if not defined.
+        </dd>
+    </dl>
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd>
+            Content of the text message that was sent
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>number
+            <span class="property-type">array</span>
+        </dt>
+        <dd>
+            Phone numbers the text massage was sent to. Returned as an
+            array of strings.
         </dd>
     </dl>
 </script>

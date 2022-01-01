@@ -49,7 +49,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
+      node.status({ text: 'Connecting' })
       try {
         const lan = new huaweiLteApi.Lan(await node.server.connect())
         const result = await lan.hostInfo()
@@ -83,7 +83,7 @@ module.exports = function (RED) {
         return
       }
       node.server = RED.nodes.getNode(config.server)
-      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
+      node.status({ text: 'Connecting' })
       try {
         const dialUp = new huaweiLteApi.DialUp(await node.server.connect())
         if (msg.mode === 'on' || msg.mode === 1 || msg.mode === true) {
@@ -129,7 +129,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
+      node.status({ text: 'Connecting' })
       try {
         const device = new huaweiLteApi.Device(await node.server.connect())
         const result = await device.signal()
@@ -154,7 +154,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
+      node.status({ text: 'Connecting' })
       try {
         const device = new huaweiLteApi.WLan(await node.server.connect())
         const result = await device.hostList()
@@ -179,7 +179,7 @@ module.exports = function (RED) {
     const node = this
     node.on('input', async function (msg, send, done) {
       node.server = RED.nodes.getNode(config.server)
-      node.status({ fill: '', shape: 'dot', text: 'Connecting' })
+      node.status({ text: 'Connecting' })
       try {
         const device = new huaweiLteApi.Device(await node.server.connect())
         const result = await device.reboot()
@@ -198,4 +198,54 @@ module.exports = function (RED) {
     })
   }
   RED.nodes.registerType('huawei-reboot', HuaweiReboot)
+  function HuaweiSMSSend (config) {
+    RED.nodes.createNode(this, config)
+    const node = this
+    node.phoneNumber = config.phoneNumber
+    node.on('input', async function (msg, send, done) {
+      function parseNumber (inputNumber) {
+        if (typeof inputNumber === 'string') {
+          return [inputNumber]
+        } else if (typeof inputNumber === 'number') {
+          return [inputNumber.toString()]
+        } else if (Array.isArray(inputNumber)) {
+          return inputNumber.map(element => {
+            return parseNumber(element)[0]
+          })
+        }
+        return ['']
+      }
+      msg.payload = String(msg.payload)
+      msg.number = parseNumber(msg.number || node.phoneNumber)
+      if (msg.number === ['']) {
+        done('Error understanding input number. Accepts text, number and array of text/numbers but not ' + String(msg.number || node.phoneNumber))
+        return
+      }
+      node.server = RED.nodes.getNode(config.server)
+      node.status({ text: 'Connecting' })
+      try {
+        const SMS = new huaweiLteApi.Sms(await node.server.connect())
+        const result = await SMS.sendSms(msg.phoneNumber, msg.payload)
+        if (result !== 'OK') {
+          node.status({ fill: 'red', text: result })
+          done(result)
+          return
+        }
+        send(msg)
+      } catch (error) {
+        if (error.code === 125002) {
+          // Make sure the session timeout happens on session error (125002)
+          node.server.sessionTimeout = 0
+        } else {
+          console.trace(error)
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
+        return
+      }
+      node.status({ text: '' })
+      done()
+    })
+  }
+  RED.nodes.registerType('huawei-sms-send', HuaweiSMSSend)
 }
