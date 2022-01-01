@@ -213,12 +213,14 @@ module.exports = function (RED) {
             return parseNumber(element)[0]
           })
         }
-        node.warn('Error understanding input number. Accepts text, number and array of text/numbers but not ' + String(inputNumber))
         return ['']
       }
-      msg.payload = String(msg.payload) || 'empty string'
-      msg.number = msg.number || node.phoneNumber || ['']
-      msg.number = parseNumber(msg.number)
+      msg.payload = String(msg.payload)
+      msg.number = parseNumber(msg.number || node.phoneNumber)
+      if (msg.number === ['']) {
+        done('Error understanding input number. Accepts text, number and array of text/numbers but not ' + String(msg.number || node.phoneNumber))
+        return
+      }
       node.server = RED.nodes.getNode(config.server)
       node.status({ text: 'Connecting' })
       try {
