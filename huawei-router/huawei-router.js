@@ -225,7 +225,7 @@ module.exports = function (RED) {
       node.status({ text: 'Connecting' })
       try {
         const SMS = new huaweiLteApi.Sms(await node.server.connect())
-        const result = await SMS.sendSms(msg.phoneNumber, msg.payload)
+        const result = await SMS.sendSms(msg.number, msg.payload)
         if (result !== 'OK') {
           node.status({ fill: 'red', text: result })
           done(result)
