@@ -346,3 +346,65 @@
         </dd>
     </dl>
 </script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("huawei-monitoring", {
+        category: 'homesmart',
+        color: '#E5766A',
+        defaults: {
+            name: {value:""},
+            server: {type:"huawei-config", required:true},
+            monitorOption: {value:"status"}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "bridge.svg",
+        label: function () {
+            return this.name || "monitor " + this.monitorOption
+        }
+    })
+</script>
+
+<script type="text/html" data-template-name="huawei-monitoring">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-monitorOption"><i class="fa fa-tag"></i> Monitor option</label>
+        <select value="" id="node-input-monitorOption">
+            <option value="status">status</option>
+            <option value="convergedStatus">convergedStatus</option>
+            <option value="checkNotifications">checkNotifications</option>
+            <option value="trafficStatistics">trafficStatistics</option>
+            <option value="startDate">startDate</option>
+            <option value="monthStatistics">monthStatistics</option>
+        </select>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="huawei-monitoring">
+    <p>Get monitoring info from router</a>.</p>
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd>
+            Start node
+        </dd>
+    </dl>
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd>
+            Result of monitor choice
+        </dd>
+    </dl>
+</script>

@@ -248,4 +248,56 @@ module.exports = function (RED) {
     })
   }
   RED.nodes.registerType('huawei-sms-send', HuaweiSMSSend)
+  function HuaweiMonitoring (config) {
+    RED.nodes.createNode(this, config)
+    const node = this
+    node.monitorOption = config.monitorOption
+    node.on('input', async function (msg, send, done) {
+      const monitorOptions = ['status', 'convergedStatus', 'checkNotifications', 'trafficStatistics', 'startDate', 'monthStatistics']
+      if (!monitorOptions.includes(node.monitorOption)) {
+        done(`Unknown monitoring choice ${node.monitorOption}`)
+      }
+      node.server = RED.nodes.getNode(config.server)
+      node.status({ text: 'Connecting' })
+      try {
+        const device = new huaweiLteApi.Monitoring(await node.server.connect())
+        let result = ''
+        switch (node.monitorOption) {
+          case monitorOptions[0]:
+            result = await device.status()
+            break
+          case monitorOptions[1]:
+            result = await device.convergedStatus()
+            break
+          case monitorOptions[2]:
+            result = await device.checkNotifications()
+            break
+          case monitorOptions[3]:
+            result = await device.trafficStatistics()
+            break
+          case monitorOptions[4]:
+            result = await device.startDate()
+            break
+          case monitorOptions[5]:
+            result = await device.monthStatistics()
+            break
+          default:
+            done('Switch case should not end here huawei-monitoring')
+            return
+        }
+        msg.payload = result
+        node.status({ text: '' })
+        send(msg)
+        done()
+      } catch (error) {
+        if (error.code === 125002 || error.code === 125003) {
+          // Make sure the session timeout happens on session error (125002/125003)
+          node.server.sessionTimeout = 0
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
+      }
+    })
+  }
+  RED.nodes.registerType('huawei-monitoring', HuaweiMonitoring)
 }
