@@ -366,7 +366,7 @@
         defaults: {
             name: {value:""},
             server: {type:"huawei-config", required:true},
-            infoOption: {value:"status"}
+            infoOption: {value:"Monitor-status"}
         },
         inputs: 1,
         outputs: 1,
@@ -400,6 +400,11 @@
             <option value="signal">signal</option>
         </select>
     </div>
+    <div class="form-tips">
+        <p>
+           Examples of what to expect can be <a href="https://github.com/zinen/node-red-contrib-huawei-router/tree/main/nodes/info" target="_blank"> found here</a>
+        </p>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="huawei-info">
@@ -419,7 +424,7 @@
             <span class="property-type">string</span>
         </dt>
         <dd>
-            Result of monitor choice
+            Result of info choice. Examples of what to expect can be <a href="https://github.com/zinen/node-red-contrib-huawei-router/tree/main/nodes/info"> found here</a>
         </dd>
     </dl>
 </script>

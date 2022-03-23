@@ -264,31 +264,31 @@ module.exports = function (RED) {
         let result = ''
         switch (node.infoOption) {
           case infoOptions[0]:
-            result = await huaweiLteApi.Monitoring(await node.server.connect()).status()
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).status()
             break
           case infoOptions[1]:
-            result = await huaweiLteApi.Monitoring(await node.server.connect()).convergedStatus()
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).convergedStatus()
             break
           case infoOptions[2]:
-            result = await huaweiLteApi.Monitoring(await node.server.connect()).checkNotifications()
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).checkNotifications()
             break
           case infoOptions[3]:
-            result = await huaweiLteApi.Monitoring(await node.server.connect()).trafficStatistics()
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).trafficStatistics()
             break
           case infoOptions[4]:
-            result = await huaweiLteApi.Monitoring(await node.server.connect()).startDate()
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).startDate()
             break
           case infoOptions[5]:
-            result = await huaweiLteApi.Monitoring(await node.server.connect()).monthStatistics()
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).monthStatistics()
             break
           case infoOptions[6]:
-            result = await huaweiLteApi.Lan(await node.server.connect()).hostInfo()
+            result = await new huaweiLteApi.Lan(await node.server.connect()).hostInfo()
             break
           case infoOptions[7]:
-            result = await huaweiLteApi.WLan(await node.server.connect()).hostList()
+            result = await new huaweiLteApi.WLan(await node.server.connect()).hostList()
             break
           case infoOptions[8]:
-            result = await huaweiLteApi.Device(await node.server.connect()).signal()
+            result = await new huaweiLteApi.Device(await node.server.connect()).signal()
             break
           default:
             done('Switch case should not end here huawei-info')
