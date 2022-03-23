@@ -3,7 +3,7 @@ The info node has possibility to return lots of info found in the API.
 
 Hare are some examples of data returned:
 
-## status
+## Monitor status
 ```js
 {
   ConnectionStatus: '901',

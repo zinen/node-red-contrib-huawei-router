@@ -256,6 +256,7 @@ module.exports = function (RED) {
       const infoOptions = ['Monitor-status', 'convergedStatus', 'checkNotifications', 'trafficStatistics', 'startDate', 'monthStatistics', 'Lan-hostInfo', 'WLan-hostInfo', 'signal']
       if (!infoOptions.includes(node.infoOption)) {
         done(`Unknown info option ${node.infoOption}`)
+        return
       }
       node.server = RED.nodes.getNode(config.server)
       node.status({ text: 'Connecting' })
