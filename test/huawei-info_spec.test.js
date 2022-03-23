@@ -38,7 +38,7 @@ describe('huawei-info Node', function () {
         pass: process.env.ROUTER_PASSWORD,
         url: process.env.ROUTER_URL
       },
-      { id: 'n1', type: 'huawei-info', wires: [['n2']], server: 'n0' },
+      { id: 'n1', type: 'huawei-info', wires: [['n2']], server: 'n0', infoOption: 'Monitor-status' },
       { id: 'n2', type: 'helper' }
     ]
     helper.load(testNode, flow, function () {
