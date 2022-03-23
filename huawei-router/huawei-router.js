@@ -248,41 +248,49 @@ module.exports = function (RED) {
     })
   }
   RED.nodes.registerType('huawei-sms-send', HuaweiSMSSend)
-  function HuaweiMonitoring (config) {
+  function HuaweiInfo (config) {
     RED.nodes.createNode(this, config)
     const node = this
-    node.monitorOption = config.monitorOption
+    node.infoOption = config.infoOption
     node.on('input', async function (msg, send, done) {
-      const monitorOptions = ['status', 'convergedStatus', 'checkNotifications', 'trafficStatistics', 'startDate', 'monthStatistics']
-      if (!monitorOptions.includes(node.monitorOption)) {
-        done(`Unknown monitoring choice ${node.monitorOption}`)
+      const infoOptions = ['Monitor-status', 'convergedStatus', 'checkNotifications', 'trafficStatistics', 'startDate', 'monthStatistics', 'Lan-hostInfo', 'WLan-hostInfo', 'signal']
+      if (!infoOptions.includes(node.infoOption)) {
+        done(`Unknown info option ${node.infoOption}`)
       }
       node.server = RED.nodes.getNode(config.server)
       node.status({ text: 'Connecting' })
       try {
-        const device = new huaweiLteApi.Monitoring(await node.server.connect())
         let result = ''
-        switch (node.monitorOption) {
-          case monitorOptions[0]:
-            result = await device.status()
+        switch (node.infoOption) {
+          case infoOptions[0]:
+            result = await huaweiLteApi.Monitoring(await node.server.connect()).status()
             break
-          case monitorOptions[1]:
-            result = await device.convergedStatus()
+          case infoOptions[1]:
+            result = await huaweiLteApi.Monitoring(await node.server.connect()).convergedStatus()
             break
-          case monitorOptions[2]:
-            result = await device.checkNotifications()
+          case infoOptions[2]:
+            result = await huaweiLteApi.Monitoring(await node.server.connect()).checkNotifications()
             break
-          case monitorOptions[3]:
-            result = await device.trafficStatistics()
+          case infoOptions[3]:
+            result = await huaweiLteApi.Monitoring(await node.server.connect()).trafficStatistics()
             break
-          case monitorOptions[4]:
-            result = await device.startDate()
+          case infoOptions[4]:
+            result = await huaweiLteApi.Monitoring(await node.server.connect()).startDate()
             break
-          case monitorOptions[5]:
-            result = await device.monthStatistics()
+          case infoOptions[5]:
+            result = await huaweiLteApi.Monitoring(await node.server.connect()).monthStatistics()
+            break
+          case infoOptions[6]:
+            result = await huaweiLteApi.Lan(await node.server.connect()).hostInfo()
+            break
+          case infoOptions[7]:
+            result = await huaweiLteApi.WLan(await node.server.connect()).hostList()
+            break
+          case infoOptions[8]:
+            result = await huaweiLteApi.Device(await node.server.connect()).signal()
             break
           default:
-            done('Switch case should not end here huawei-monitoring')
+            done('Switch case should not end here huawei-info')
             return
         }
         msg.payload = result
@@ -299,5 +307,5 @@ module.exports = function (RED) {
       }
     })
   }
-  RED.nodes.registerType('huawei-monitoring', HuaweiMonitoring)
+  RED.nodes.registerType('huawei-info', HuaweiInfo)
 }
