@@ -248,4 +248,65 @@ module.exports = function (RED) {
     })
   }
   RED.nodes.registerType('huawei-sms-send', HuaweiSMSSend)
+  function HuaweiInfo (config) {
+    RED.nodes.createNode(this, config)
+    const node = this
+    node.infoOption = config.infoOption
+    node.on('input', async function (msg, send, done) {
+      const infoOptions = ['Monitor-status', 'convergedStatus', 'checkNotifications', 'trafficStatistics', 'startDate', 'monthStatistics', 'Lan-hostInfo', 'WLan-hostInfo', 'signal']
+      if (!infoOptions.includes(node.infoOption)) {
+        done(`Unknown info option ${node.infoOption}`)
+        return
+      }
+      node.server = RED.nodes.getNode(config.server)
+      node.status({ text: 'Connecting' })
+      try {
+        let result = ''
+        switch (node.infoOption) {
+          case infoOptions[0]:
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).status()
+            break
+          case infoOptions[1]:
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).convergedStatus()
+            break
+          case infoOptions[2]:
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).checkNotifications()
+            break
+          case infoOptions[3]:
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).trafficStatistics()
+            break
+          case infoOptions[4]:
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).startDate()
+            break
+          case infoOptions[5]:
+            result = await new huaweiLteApi.Monitoring(await node.server.connect()).monthStatistics()
+            break
+          case infoOptions[6]:
+            result = await new huaweiLteApi.Lan(await node.server.connect()).hostInfo()
+            break
+          case infoOptions[7]:
+            result = await new huaweiLteApi.WLan(await node.server.connect()).hostList()
+            break
+          case infoOptions[8]:
+            result = await new huaweiLteApi.Device(await node.server.connect()).signal()
+            break
+          default:
+            done('Switch case should not end here huawei-info')
+            return
+        }
+        msg.payload = result
+        node.status({ text: '' })
+        send(msg)
+        done()
+      } catch (error) {
+        if (error.code === 125002 || error.code === 125003) {
+          // Make sure the session timeout happens on session error (125002/125003)
+          node.server.sessionTimeout = 0
+        }
+        node.status({ fill: 'red', text: error.message })
+        done(error.message)
+      }
+    })
+  }
+  RED.nodes.registerType('huawei-info', HuaweiInfo)
 }
