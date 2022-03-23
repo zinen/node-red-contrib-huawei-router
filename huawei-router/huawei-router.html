@@ -372,7 +372,7 @@
         outputs: 1,
         icon: "bridge.svg",
         label: function () {
-            return this.name || "monitor " + this.infoOption
+            return this.name || "huawei " + this.infoOption
         }
     })
 </script>
@@ -387,7 +387,7 @@
         <input type="text" id="node-input-server">
     </div>
     <div class="form-row">
-        <label for="node-input-infoOption"><i class="fa fa-tag"></i> Monitor option</label>
+        <label for="node-input-infoOption"><i class="fa fa-tag"></i> Info option</label>
         <select value="" id="node-input-infoOption">
             <option value="Monitor-status">Monitor status</option>
             <option value="convergedStatus">convergedStatus</option>
@@ -408,7 +408,7 @@
 </script>
 
 <script type="text/html" data-help-name="huawei-info">
-    <p>Get monitoring info from router</a>.</p>
+    <p>Get info from router</a>.</p>
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>payload

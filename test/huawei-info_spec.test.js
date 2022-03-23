@@ -7,7 +7,7 @@ require('dotenv').config()
 
 helper.init(require.resolve('node-red'))
 
-describe('huawei-monitoring Node', function () {
+describe('huawei-info Node', function () {
   this.retries(2)
   before(function (done) {
     helper.startServer(done)
@@ -22,10 +22,10 @@ describe('huawei-monitoring Node', function () {
   })
 
   it('should be loaded', function (done) {
-    const flow = [{ id: 'n1', type: 'huawei-monitoring', name: 'huawei-monitoring' }]
+    const flow = [{ id: 'n1', type: 'huawei-info', name: 'huawei-info' }]
     helper.load(testNode, flow, function () {
       const n1 = helper.getNode('n1')
-      n1.should.have.property('name', 'huawei-monitoring')
+      n1.should.have.property('name', 'huawei-info')
       done()
     })
   })
@@ -38,7 +38,7 @@ describe('huawei-monitoring Node', function () {
         pass: process.env.ROUTER_PASSWORD,
         url: process.env.ROUTER_URL
       },
-      { id: 'n1', type: 'huawei-monitoring', wires: [['n2']], server: 'n0' },
+      { id: 'n1', type: 'huawei-info', wires: [['n2']], server: 'n0' },
       { id: 'n2', type: 'helper' }
     ]
     helper.load(testNode, flow, function () {
@@ -46,17 +46,8 @@ describe('huawei-monitoring Node', function () {
       const n1 = helper.getNode('n1')
       const n2 = helper.getNode('n2')
       n2.on('input', function (msg) {
-        // console.log(n1)
-        // console.log(msg)
         msg.payload.should.not.be.empty()
         msg.payload.should.be.Object()
-
-        // msg.payload[0].should.property('MacAddress').which.is.a.String()
-        // msg.payload[0].should.property('ID').which.is.a.String()
-        // msg.payload[0].should.property('IpAddress').which.is.a.String()
-        // msg.payload[0].should.property('AssociatedSsid').which.is.a.String()
-        // msg.payload[0].should.property('AssociatedTime').which.is.a.String()
-        // msg.payload[0].should.property('HostName').which.is.a.String()
         done()
       })
       n1.on('call:error', function (err) {
