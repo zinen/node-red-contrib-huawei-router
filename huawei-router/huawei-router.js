@@ -283,6 +283,7 @@ module.exports = function (RED) {
             break
           case infoOptions[6]:
             result = await new huaweiLteApi.Lan(await node.server.connect()).hostInfo()
+            result = result.Hosts.Host
             break
           case infoOptions[7]:
             result = await new huaweiLteApi.WLan(await node.server.connect()).hostList()

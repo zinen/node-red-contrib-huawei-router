@@ -73,25 +73,34 @@ Hare are some examples of data returned:
 ```
 ## LAN hostInfo
 ```js
-{
-  Hosts: {
-    Host: [
-      {
-            MacAddress: 'AA:BB:CC:DD:EE:22',
-            Active: '1',
-            AssociatedSsid: '',
-            HostName: 'PC LAN',
-            AddressSource: 'DHCP',
-            isLocalDevice: '0',
-            LeaseTime: '82358',
-            ID: '1',
-            InterfaceType: 'Ethernet',
-            AssociatedTime: '4041',
-            IpAddress: '192.168.8.4'
-            }, ..
-    ]
-  }
-}
+[
+  {
+    MacAddress: 'AA:BB:CC:DD:EE:22',
+    Active: '1',
+    AssociatedSsid: '',
+    HostName: 'PC LAN',
+    AddressSource: 'DHCP',
+    isLocalDevice: '0',
+    LeaseTime: '82358',
+    ID: '1',
+    InterfaceType: 'Ethernet',
+    AssociatedTime: '4041',
+    IpAddress: '192.168.8.4'
+  }, ..
+  {
+    MacAddress: 'AA:BB:CC:DD:EE:22',
+    Active: '0',
+    AssociatedSsid: '',
+    HostName: 'raspberry pi',
+    AddressSource: 'DHCP',
+    isLocalDevice: '0',
+    LeaseTime: '82358',
+    ID: '2',
+    InterfaceType: 'Wireless',
+    AssociatedTime: '4041',
+    IpAddress: '192.168.8.5'
+    }
+]
 ```
 ## Wireless hostList
 ```js
