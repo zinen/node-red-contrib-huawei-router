@@ -1,7 +1,7 @@
 module.exports = function (RED) {
   'use strict'
   const huaweiLteApi = require('huawei-lte-api')
-  function HuaweiConfig (n) {
+  function HuaweiConfig(n) {
     RED.nodes.createNode(this, n)
     const node = this
     node.connect = async function () {
@@ -12,7 +12,7 @@ module.exports = function (RED) {
           this.connection = null
         }
         // Add 298 seconds to current time as timeout
-        this.sessionTimeout = node.now + 298000
+        this.sessionTimeout = n.sessionTimeout ? node.now + n.sessionTimeout * 1000 : node.now + 298000
         if (!this.connection) {
           // Make new session
           this.connection = new huaweiLteApi.Connection(`http://${n.user}:${n.pass}@${n.url}`)
@@ -44,7 +44,7 @@ module.exports = function (RED) {
   }
   RED.nodes.registerType('huawei-config', HuaweiConfig)
 
-  function HuaweiLanHosts (config) {
+  function HuaweiLanHosts(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.on('input', async function (msg, send, done) {
@@ -69,7 +69,7 @@ module.exports = function (RED) {
   }
   RED.nodes.registerType('huawei-lanhosts', HuaweiLanHosts)
 
-  function HuaweiMobileData (config) {
+  function HuaweiMobileData(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.mode = config.mode
@@ -124,7 +124,7 @@ module.exports = function (RED) {
   }
   RED.nodes.registerType('huawei-mobiledata', HuaweiMobileData)
 
-  function HuaweiSignal (config) {
+  function HuaweiSignal(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.on('input', async function (msg, send, done) {
@@ -149,7 +149,7 @@ module.exports = function (RED) {
   }
   RED.nodes.registerType('huawei-signal', HuaweiSignal)
 
-  function HuaweiWlanHosts (config) {
+  function HuaweiWlanHosts(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.on('input', async function (msg, send, done) {
@@ -174,7 +174,7 @@ module.exports = function (RED) {
   }
   RED.nodes.registerType('huawei-wlanhosts', HuaweiWlanHosts)
 
-  function HuaweiReboot (config) {
+  function HuaweiReboot(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.on('input', async function (msg, send, done) {
@@ -198,12 +198,12 @@ module.exports = function (RED) {
     })
   }
   RED.nodes.registerType('huawei-reboot', HuaweiReboot)
-  function HuaweiSMSSend (config) {
+  function HuaweiSMSSend(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.phoneNumber = config.phoneNumber
     node.on('input', async function (msg, send, done) {
-      function parseNumber (inputNumber) {
+      function parseNumber(inputNumber) {
         if (typeof inputNumber === 'string') {
           return [inputNumber]
         } else if (typeof inputNumber === 'number') {
@@ -248,7 +248,7 @@ module.exports = function (RED) {
     })
   }
   RED.nodes.registerType('huawei-sms-send', HuaweiSMSSend)
-  function HuaweiInfo (config) {
+  function HuaweiInfo(config) {
     RED.nodes.createNode(this, config)
     const node = this
     node.infoOption = config.infoOption
