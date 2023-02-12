@@ -3,9 +3,9 @@
   "version": "2.0.0",
   "description": "",
   "scripts": {
-    "xpretest": "npm install node-red-node-test-helper node-red mocha --no-save",
+    "pretest": "npm install node-red-node-test-helper node-red mocha --no-save",
     "test": "mocha \"test/**/*.test.js\"",
-    "xposttest": "npm uninstall node-red-node-test node-red"
+    "posttest": "npm uninstall node-red-node-test node-red"
   },
   "author": "zinen",
   "license": "MIT",
