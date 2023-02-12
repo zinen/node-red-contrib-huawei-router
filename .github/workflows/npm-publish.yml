@@ -3,7 +3,7 @@ name: NPM Publish
 on:
   # Run on push to the main branch
   push:
-    branches: [ main , test-node-version]
+    branches: [ test-node-version]
   # Run only test part for PRs.
   pull_request:
 
@@ -12,28 +12,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 14
       - run: npm ci
       # Test requires and router to be readable from github actions. Mine is not
       # and to tests are done locally on my B525s-23a router
       # - run: npm test --if-present
-
-  publish:
-    needs: build
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    # Only publish on push
-    if: github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://registry.npmjs.org/
-      - run: npm install
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
