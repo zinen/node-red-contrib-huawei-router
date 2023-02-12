@@ -2,13 +2,15 @@
     RED.nodes.registerType('huawei-config', {
         category: 'config',
         defaults: {
-            user: { value: "admin", required: true },
-            pass: { value: "", required: true },
-            url: { value: "192.168.1.1", required: true },
+            url: { value: "192.168.8.1", required: true },
             sessionTimeout: { value: "" }
         },
+        credentials: {
+            user: { type: "text" },
+            pass: { type: "password" }
+        },
         label: function () {
-            return this.user + "@" + this.url;
+            return this.url;
         }
     });
 </script>
@@ -24,7 +26,7 @@
     </div>
     <div class="form-row">
         <label for="node-config-input-url"><i class="fa fa-globe"></i> URL of router</label>
-        <input type="text" id="node-config-input-url" placeholder="Eg. 192.168.0.45">
+        <input type="text" id="node-config-input-url" placeholder="Eg. 192.168.8.1">
     </div>
     <div class="form-row">
         <label for="node-config-input-sessionTimeout"><i class="fa fa-globe"></i> Optional: Session timeout</label>
@@ -36,71 +38,24 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('huawei-lanhosts', {
-        category: 'homesmart',
-        color: '#E5766A',
-        defaults: {
-            name: { value: "" },
-            server: { type: "huawei-config", required: true }
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "bridge.svg",
-        label: function () {
-            return this.name || "huawei lanhosts"
-        }
-    })
-</script>
-
-<script type="text/html" data-template-name="huawei-lanhosts">
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
-        <input type="text" id="node-input-server">
-    </div>
-    <div>
-        <b>Please use Huawei info node as this one will be removed in future releases</b>
-    </div>
-</script>
-
-<script type="text/html" data-help-name="huawei-lanhosts">
-    <p><b>Please use Huawei info node as this one will be removed in future releases</b></p>
-    <p>Returns array of connected devices.</p>
-    <p>Accepts any input to make it run.</p>
-    <h3>Output</h3>
-    <dl class="message-properties">
-        <dt>payload
-            <span class="property-type">array</span>
-        </dt>
-        <dd>
-            Returns array of connected devices 
-        </dd>
-    </dl>
-</script>
-
-
-<script type="text/javascript">
-    RED.nodes.registerType("huawei-mobiledata", {
+    RED.nodes.registerType("huawei-send-cmd", {
         category: 'homesmart',
         color: '#E5766A',
         defaults: {
             name: { value: "" },
             server: { type: "huawei-config", required: true },
-            mode: { value: "off-on" }
+            cmdOption: { value: "MobileData" }
         },
         inputs: 1,
         outputs: 1,
         icon: "bridge.svg",
         label: function () {
-            return this.name || "huawei mobiledata"
+            return this.name || "huawei cmd " + this.cmdOption
         }
     })
 </script>
 
-<script type="text/html" data-template-name="huawei-mobiledata">
+<script type="text/html" data-template-name="huawei-send-cmd">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -110,43 +65,29 @@
         <input type="text" id="node-input-server">
     </div>
     <div class="form-row">
-        <label for="node-input-mode"><i class="fa fa-pencil-square-o"></i> Mode</label>
-        <select value="" id="node-input-mode">
-            <option value="off-on">turn data off then on again</option>
-            <option value="on">turn data on</option>
-            <option value="off">turn data off</option>
-            <option value="toggle">toggle data on/off</option>
+        <label for="node-input-cmdOption"><i class="fa fa-tag"></i> Info option</label>
+        <select value="" id="node-input-cmdOption">
+            <option value="MobileData">Mobile data</option>
+            <option value="Reboot">Reboot</option>
+            <option value="SMSSend">Send SMS</option>
         </select>
     </div>
+    <div class="form-tips">
+        <p>
+           Examples of what to expect can be <a href="https://github.com/zinen/node-red-contrib-huawei-router/tree/main/nodes/info" target="_blank"> found here</a>
+        </p>
+    </div>
 </script>
 
-<script type="text/html" data-help-name="huawei-mobiledata">
-    <p>Change state of mobile data.</p>
-    <p>Accepts any input to make it run.</p>
+<script type="text/html" data-help-name="huawei-send-cmd">
+    <p>Send a command request to router</p>
     <h3>Input</h3>
-    <dl class="message-properties">
-        <dt>mode
-            <span class="property-type">string/number/bool</span>
-        </dt>
-        <dd>
-            Accepted values are 'on'/1/true, 'off'/0/false, 'toggle', 'off-on'.
-        </dd>
-    </dl>
-    <h3>Output</h3>
     <dl class="message-properties">
         <dt>payload
             <span class="property-type">string</span>
         </dt>
         <dd>
-            Returns OK or throws an error
-        </dd>
-    </dl>
-    <dl class="message-properties">
-        <dt>state
-            <span class="property-type">number</span>
-        </dt>
-        <dd>
-            States the updated status for data as a number. 1 = ON, 0 = OFF.
+            Content depends on type of command selected.
         </dd>
     </dl>
     <dl class="message-properties">
@@ -154,189 +95,7 @@
             <span class="property-type">string/number/bool</span>
         </dt>
         <dd>
-            Return mode back. Mode is either defined as input msg or via node properties.
-        </dd>
-    </dl>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('huawei-signal', {
-        category: 'homesmart',
-        color: '#E5766A',
-        defaults: {
-            name: { value: "" },
-            server: { type: "huawei-config", required: true }
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "bridge.svg",
-        label: function () {
-            return this.name || "huawei signal"
-        }
-    })
-</script>
-
-<script type="text/html" data-template-name="huawei-signal">
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
-        <input type="text" id="node-input-server">
-    </div>
-    <div>
-        <b>Please use Huawei info node as this one will be removed in future releases</b>
-    </div>
-</script>
-
-<script type="text/html" data-help-name="huawei-signal">
-    <p><b>Please use Huawei info node as this one will be removed in future releases</b></p>
-    <p>Returns signal strength of data/LTE connection.</p>
-    <p>Accepts any input to make it run.</p>
-    <h3>Output</h3>
-    <dl class="message-properties">
-        <dt>payload
-            <span class="property-type">object</span>
-        </dt>
-        <dd>
-            Returns list of signal data properties. <a href="https://github.com/zinen/node-red-contrib-huawei-router/issues/1">See more info here</a>
-        </dd>
-    </dl>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('huawei-wlanhosts', {
-        category: 'homesmart',
-        color: '#E5766A',
-        defaults: {
-            name: { value: "" },
-            server: { type: "huawei-config", required: true }
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "bridge.svg",
-        label: function () {
-            return this.name || "huawei wlanhosts"
-        }
-    })
-</script>
-
-<script type="text/html" data-template-name="huawei-wlanhosts">
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
-        <input type="text" id="node-input-server">
-    </div>
-    <div>
-        <b>Please use Huawei info node as this one will be removed in future releases</b>
-    </div>
-</script>
-
-<script type="text/html" data-help-name="huawei-wlanhosts">
-    <p><b>Please use Huawei info node as this one will be removed in future releases</b></p>
-    <p>Returns array of connected devices.</p>
-    <p>Accepts any input to make it run.</p>
-    <h3>Output</h3>
-    <dl class="message-properties">
-        <dt>payload
-            <span class="property-type">array</span>
-        </dt>
-        <dd>
-            Returns array of connected devices 
-        </dd>
-    </dl>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('huawei-reboot', {
-        category: 'homesmart',
-        color: '#E5766A',
-        defaults: {
-            name: { value: "" },
-            server: { type: "huawei-config", required: true }
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "bridge.svg",
-        label: function () {
-            return this.name || "huawei reboot"
-        }
-    })
-</script>
-
-<script type="text/html" data-template-name="huawei-reboot">
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
-        <input type="text" id="node-input-server">
-    </div>
-</script>
-
-<script type="text/html" data-help-name="huawei-reboot">
-    <p>Request router to do a reboot.</p>
-    <p>Accepts any input to make it run.</p>
-    <h3>Output</h3>
-    <dl class="message-properties">
-        <dt>payload
-            <span class="property-type">object</span>
-        </dt>
-        <dd>
-            Returns OK if reboot is happening.
-        </dd>
-    </dl>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType("huawei-sms-send", {
-        category: 'homesmart',
-        color: '#E5766A',
-        defaults: {
-            name: { value: "" },
-            server: { type: "huawei-config", required: true },
-            phoneNumber: { value: "" },
-            message: { value: "" }
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "bridge.svg",
-        label: function () {
-            return this.name || "huawei send sms"
-        }
-    })
-</script>
-
-<script type="text/html" data-template-name="huawei-sms-send">
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
-        <input type="text" id="node-input-server">
-    </div>
-    <div class="form-row">
-        <label for="node-input-phoneNumber"><i class="fa fa-tag"></i> Phone number</label>
-        <input type="text" id="node-input-phoneNumber" placeholder="0123465789">
-    </div>
-</script>
-
-<script type="text/html" data-help-name="huawei-sms-send">
-    <p>Send sms/text message from router. This only works if your router supports SMS do check out the <a href="https://www.npmjs.com/package/huawei-lte-api">tested devices list</a>.</p>
-    <p>Parameters can be set inside the node or via input variables. Input variables has higher priority then values defines in the node.</p>
-    <h3>Input</h3>
-    <dl class="message-properties">
-        <dt>payload
-            <span class="property-type">string</span>
-        </dt>
-        <dd>
-            Message to be send.
+            Required for mobile data command: Accepted values are 'on'/1/true, 'off'/0/false, 'toggle', 'off-on'.
         </dd>
     </dl>
     <dl class="message-properties">
@@ -344,7 +103,7 @@
             <span class="property-type">string/array of strings or numbers</span>
         </dt>
         <dd>
-            Phone number or numbers to receive the text. Number defined in properties will be used if not defined.
+            Required for send SMS command: Phone number or numbers to receive the text.
         </dd>
     </dl>
     <h3>Output</h3>
@@ -353,7 +112,23 @@
             <span class="property-type">string</span>
         </dt>
         <dd>
-            Content of the text message that was sent
+            Result of command choice from API
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>state
+            <span class="property-type">number</span>
+        </dt>
+        <dd>
+            Mobile data command: States the updated status for data as a number. 1 = ON, 0 = OFF.
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>mode
+            <span class="property-type">string/number/bool</span>
+        </dt>
+        <dd>
+            Mobile data command: Return mode back. Mode is either defined as input msg or via node properties.
         </dd>
     </dl>
     <dl class="message-properties">
@@ -361,7 +136,7 @@
             <span class="property-type">array</span>
         </dt>
         <dd>
-            Phone numbers the text massage was sent to. Returned as an
+            Send SMS command: Phone numbers the text massage was sent to. Returned as an
             array of strings.
         </dd>
     </dl>
@@ -416,7 +191,7 @@
 </script>
 
 <script type="text/html" data-help-name="huawei-info">
-    <p>Get info from router</a>.</p>
+    <p>Get info from router</p>
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>payload
