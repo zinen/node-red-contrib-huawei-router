@@ -7,6 +7,10 @@ Node-RED node to get information and send commands to Huawei LTE routers.
 
 Uses the unofficial API from npm package [huawei-lte-api](https://www.npmjs.com/package/huawei-lte-api).
 
+## !! Breaking change moving from version 0.x.x or 1.x.x to 2.0.0 and above
+
+See [version 2.0.0 release]( https://github.com/zinen/node-red-contrib-huawei-router/releases/tag/2.0.0)
+
 Example of a node:
 
 ![Example of a node](./img/info-node.jpg)
