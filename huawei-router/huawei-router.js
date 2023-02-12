@@ -10,33 +10,33 @@ module.exports = function (RED) {
     node.requestQueue = 0
     node.requestQueueing = async function (event) {
       if (event == 'end') {
-        this.requestQueue--
+        this.requestQueueActive = false
         return
       } else if (event == 'wait') {
-        this.requestQueue++
+        //
       } else {
         throw new Error(`Error in requestQueueing handling. event=${event} should be wait or end`)
       }
-      while (new Date().getSeconds() < this.requestQueueTimeout && this.requestQueue > 2) {
+      while (this.requestQueueActive && new Date().getTime() < this.requestQueueTimeout) {
         await this.promiseTimeout(250)
       }
-      if (!new Date().getSeconds() < this.requestQueueTimeout && this.requestQueue>0) this.requestQueue--
-      this.requestQueueTimeout = new Date().getSeconds() + 10
+      this.requestQueueTimeout = new Date().getTime() + 7000
+      this.requestQueueActive = true
     }
     node.connect = async function () {
       try {
-        const now = (new Date()).getTime()
+        const now = new Date().getTime()
         // On timeout a new session should be made
         if (now >= this.sessionTimeout) {
           this.connection = null
         }
-        // Add 298 seconds to current time as timeout
-        this.sessionTimeout = n.sessionTimeout ? now + n.sessionTimeout * 1000 : now + 298000
         if (!this.connection) {
           // Make new session
           this.connection = new huaweiLteApi.Connection(`http://${node.credentials.user}:${node.credentials.pass}@${n.url}`)
           await this.connection.ready
         }
+        // Add 298 seconds to current time as timeout
+        this.sessionTimeout = n.sessionTimeout ? now + n.sessionTimeout * 1000 : now + 298000
         return this.connection
       } catch (error) {
         this.connection = null
@@ -45,9 +45,9 @@ module.exports = function (RED) {
     }
     node.on('close', async function (removed, done) {
       try {
-        if ((new Date()).getTime() < node.sessionTimeout) {
+        if (new Date().getTime() < node.sessionTimeout) {
+          // Session should still be active. Do a logout
           const user = new huaweiLteApi.User(await this.connect())
-          // await user.logout()
           Promise.race([user.logout(), node.promiseTimeout(7000)])
         }
       } finally {
@@ -162,7 +162,9 @@ module.exports = function (RED) {
         node.status({ text: '' })
         done()
       } catch (error) {
-        if (error.code === 125002 || error.code === 125003) {
+        if (error.code === 113004) {
+          error.message = '113004: SMS out box is full'
+        } else if (error.code === 125002 || error.code === 125003) {
           // Make sure the session timeout happens on session error (125002/125003)
           node.server.sessionTimeout = 0
         }
