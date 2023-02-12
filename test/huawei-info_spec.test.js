@@ -45,7 +45,7 @@ describe('huawei-info Node', function () {
         pass: process.env.ROUTER_PASSWORD,
       }
     }
-    helper.load(testNode, flow, testCredentials,  function () {
+    helper.load(testNode, flow, testCredentials, function () {
       helper.getNode('n0')
       const n1 = helper.getNode('n1')
       const n2 = helper.getNode('n2')
@@ -78,7 +78,7 @@ describe('huawei-info Node', function () {
         pass: process.env.ROUTER_PASSWORD,
       }
     }
-    helper.load(testNode, flow, testCredentials,  function () {
+    helper.load(testNode, flow, testCredentials, function () {
       helper.getNode('n0')
       const n1 = helper.getNode('n1')
       const n2 = helper.getNode('n2')
@@ -116,7 +116,7 @@ describe('huawei-info Node', function () {
         pass: process.env.ROUTER_PASSWORD,
       }
     }
-    helper.load(testNode, flow, testCredentials,  function () {
+    helper.load(testNode, flow, testCredentials, function () {
       helper.getNode('n0')
       const n1 = helper.getNode('n1')
       const n2 = helper.getNode('n2')
@@ -155,7 +155,7 @@ describe('huawei-info Node', function () {
         pass: process.env.ROUTER_PASSWORD,
       }
     }
-    helper.load(testNode, flow, testCredentials,  function () {
+    helper.load(testNode, flow, testCredentials, function () {
       helper.getNode('n0')
       const n1 = helper.getNode('n1')
       const n2 = helper.getNode('n2')
@@ -172,5 +172,5 @@ describe('huawei-info Node', function () {
       n1.receive({ payload: '' })
     })
   })
-  
+
 })
