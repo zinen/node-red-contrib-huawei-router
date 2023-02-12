@@ -7,6 +7,7 @@ module.exports = function (RED) {
     node.promiseTimeout = function (delayMs) {
       return new Promise(resolve => setTimeout(resolve, delayMs))
     }
+    node.requestQueue = 0
     node.requestQueueing = async function (event) {
       if (event == 'end') {
         this.requestQueue--
@@ -16,21 +17,21 @@ module.exports = function (RED) {
       } else {
         throw new Error(`Error in requestQueueing handling. event=${event} should be wait or end`)
       }
-      while (new Date().setSeconds() < this.requestQueueTimeout && this.requestQueue >= 3) {
+      while (new Date().getSeconds() < this.requestQueueTimeout && this.requestQueue > 2) {
         await this.promiseTimeout(250)
       }
-      this.requestQueueActive = true
-      this.requestQueueTimeout = new Date().setSeconds() + 10
+      if (!new Date().getSeconds() < this.requestQueueTimeout && this.requestQueue>0) this.requestQueue--
+      this.requestQueueTimeout = new Date().getSeconds() + 10
     }
     node.connect = async function () {
       try {
-        this.now = (new Date()).getTime()
+        const now = (new Date()).getTime()
         // On timeout a new session should be made
-        if (this.now >= this.sessionTimeout) {
+        if (now >= this.sessionTimeout) {
           this.connection = null
         }
         // Add 298 seconds to current time as timeout
-        this.sessionTimeout = n.sessionTimeout ? node.now + n.sessionTimeout * 1000 : node.now + 298000
+        this.sessionTimeout = n.sessionTimeout ? now + n.sessionTimeout * 1000 : now + 298000
         if (!this.connection) {
           // Make new session
           this.connection = new huaweiLteApi.Connection(`http://${node.credentials.user}:${node.credentials.pass}@${n.url}`)
@@ -79,6 +80,11 @@ module.exports = function (RED) {
       }
       try {
         node.server = RED.nodes.getNode(config.server)
+        if (!node.server || !node.server.connect) {
+          node.status({ fill: 'red', text: 'Unknown config error' })
+          done('Unknown config error')
+          return
+        }
         node.status({ text: 'Connecting' })
         await node.server.requestQueueing('wait')
         switch (config.cmdOption) {
@@ -178,6 +184,11 @@ module.exports = function (RED) {
         return
       }
       node.server = RED.nodes.getNode(config.server)
+      if (!node.server || !node.server.connect) {
+        node.status({ fill: 'red', text: 'Unknown config error' })
+        done('Unknown config error')
+        return
+      }
       node.status({ text: 'Connecting' })
       await node.server.requestQueueing('wait')
       try {

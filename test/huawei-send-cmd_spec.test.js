@@ -29,7 +29,8 @@ describe('huawei-send-cmd Node', function () {
       done()
     })
   })
-  it('should return values', function (done) {
+  it('should send SMS', function (done) {
+    // Even if router don't support SMS this will most likely still run fine
     const flow = [
       {
         id: 'n0',
@@ -97,7 +98,7 @@ describe('huawei-send-cmd Node', function () {
     })
   })
 
-  it.only('should reboot router', function (done) {
+  it('should reboot router', function (done) {
     const flow = [
       {
         id: 'n0',

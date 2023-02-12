@@ -29,7 +29,7 @@ describe('huawei-info Node', function () {
       done()
     })
   })
-  it('should return values', function (done) {
+  it('should return monitor status info', function (done) {
     const flow = [
       {
         id: 'n0',

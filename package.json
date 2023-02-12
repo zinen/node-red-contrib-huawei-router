@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-huawei-router",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "scripts": {
     "pretest": "npm install node-red-node-test-helper node-red mocha --no-save",
