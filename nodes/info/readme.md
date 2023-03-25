@@ -95,7 +95,7 @@ Hare are some examples of data returned:
     InterfaceType: 'Ethernet',
     AssociatedTime: '4041',
     IpAddress: '192.168.8.4'
-  }, ..
+  },
   {
     MacAddress: 'AA:BB:CC:DD:EE:22',
     Active: '0',
