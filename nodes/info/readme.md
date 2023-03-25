@@ -3,6 +3,15 @@ The info node has possibility to return lots of info found in the API.
 
 Hare are some examples of data returned:
 
+  * [Monitor status](#monitor-status)
+  * [convergedStatus](#convergedstatus)
+  * [checkNotifications](#checknotifications)
+  * [trafficStatistics](#trafficstatistics)
+  * [monthStatistics](#monthstatistics)
+  * [LAN hostInfo](#lan-hostinfo)
+  * [Wireless hostList](#wireless-hostlist)
+  * [signal](#signal)
+
 ## Monitor status
 ```js
 {
